@@ -27,7 +27,8 @@ namespace AmviaBillingVoxzal.Classes
             sqlQuery.AppendLine("	[CustNmbr],");
             sqlQuery.AppendLine("   (SELECT TOP 1 Name FROM [CUBE].[dbo].[Company] WHERE Groupcode COLLATE DATABASE_DEFAULT = [CustNmbr] ORDER BY ID ASC) AS 'Name',");
             sqlQuery.AppendLine("   (SELECT TOP 1 ID FROM [CUBE].[dbo].[Company] WHERE Groupcode COLLATE DATABASE_DEFAULT = [CustNmbr] ORDER BY ID ASC) AS 'Company_ID',");
-            sqlQuery.AppendLine("   CASE WHEN ([CustNmbr] LIKE 'STL%' OR [CustNmbr] LIKE 'VOD001' OR [CustNmbr] LIKE 'TRA001') THEN 'TRUE' ELSE 'FALSE' END AS 'Stratus'");
+            sqlQuery.AppendLine("   CASE WHEN ([CustNmbr] LIKE 'STL%' OR [CustNmbr] LIKE 'VOD001' OR [CustNmbr] LIKE 'TRA001') THEN 'TRUE' ELSE 'FALSE' END AS 'Stratus',");
+            sqlQuery.AppendLine("   CASE WHEN (SELECT TOP 1 MinimumBilling FROM [CUBE].[dbo].[Company] WHERE GRoupcode COLLATE DATABASE_DEFAULT = [CustNmbr] order BY ID) = -1.00 THEN 'Sliding Scale' Else 'Per User' END AS 'Type'");
             sqlQuery.AppendLine("FROM");
             sqlQuery.AppendLine("	[TempAtlantic].[dbo].[VmanBillingFile]");
             //sqlQuery.AppendLine("WHERE");

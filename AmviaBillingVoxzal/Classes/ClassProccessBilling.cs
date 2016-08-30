@@ -55,6 +55,7 @@ namespace AmviaBillingVoxzal.Classes
                 CompanyLevelRow["Min Billing"] = company.MinBill;
                 CompanyLevelRow["Final Bill"] = "";
                 CompanyLevelRow["Company Min Billing"] = company.CompanyMinBill;
+                CompanyLevelRow["Billing Type"] = company.BillingType;
 
                 companyTable.Rows.Add(CompanyLevelRow);
 
@@ -126,6 +127,10 @@ namespace AmviaBillingVoxzal.Classes
             DataColumn columnNine = new DataColumn();
             columnNine.ColumnName = "Company Min Billing";
             companyTable.Columns.Add(columnNine);
+
+            DataColumn columnTen = new DataColumn();
+            columnTen.ColumnName = "Billing Type";
+            companyTable.Columns.Add(columnTen);
 
             return companyTable;
         }

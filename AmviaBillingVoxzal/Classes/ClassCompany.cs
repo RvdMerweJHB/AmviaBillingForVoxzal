@@ -15,6 +15,7 @@ namespace AmviaBillingVoxzal.Classes
         public string GroupCode { get; set; }
         public List<ClassUser> users { get; set; }
         public bool Stratus { get; set; }
+        public string BillingType { get; set; }
 
         public ClassCompany(DataRow row)
         {
@@ -22,6 +23,7 @@ namespace AmviaBillingVoxzal.Classes
             GroupCode = Convert.ToString(row["CustNmbr"]);
             Company = Convert.ToString(row["Name"]);
             Stratus = Convert.ToBoolean(row["Stratus"]);
+            BillingType = Convert.ToString(row["Type"]);
         }
 
         public void CreateNormalMinBillCompany(ref ClassCompany company, string connectionstring)
@@ -34,7 +36,12 @@ namespace AmviaBillingVoxzal.Classes
             company.CompanyMinBill = ClassData.GetMinBilCost(connectionstring, company);
 
             if (company.MinBill == -1)
+            {
+                company.BillingType = "Sliding Scale";
                 company.MinBill = (ClassData.GetMinBilCost(connectionstring, company) / company.UserCount);
+            }
+            else
+                company.BillingType = "Per User";
 
             if (company.Cost >= company.CompanyMinBill)
                 company.UsageVSMinBill = company.Cost;
@@ -42,6 +49,10 @@ namespace AmviaBillingVoxzal.Classes
                 company.UsageVSMinBill = company.CompanyMinBill;
 
             company.FinalBill = 0;
+
+            if (company.CompanyMinBill == 0)
+                company.BillingType = "Usage Only";
+
 
             company.Company = company.Company + " - " + company.GroupCode;
         }
@@ -57,6 +68,8 @@ namespace AmviaBillingVoxzal.Classes
 
             if (company.MinBill == -1)
                 company.MinBill = (ClassData.GetMinBilCost(connectionstring, company));
+            else
+                company.BillingType = "Fixed";
 
             if (company.Cost >= company.CompanyMinBill)
                 company.UsageVSMinBill = company.Cost;
