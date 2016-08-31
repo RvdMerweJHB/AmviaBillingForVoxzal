@@ -31,15 +31,23 @@ namespace AmviaBillingVoxzal.Classes
                 #region Secion One(Company)
 
                 if (company.Stratus)
+                {
                     company.CreateStratusMinBillCompany(ref company, connectionstring);
+
+                    if (company.Company.StartsWith("CMA") || company.Company.StartsWith("Knutton"))
+                        company.users = ClassData.GetUsers(connectionstring, company, company.company_ID);
+                    else if (company.Company.StartsWith("Sharp") || company.Company.StartsWith("CAP"))
+                        company.users = ClassData.GetUsers(connectionstring, company, company.Company.Substring(0,5));
+                    else
+                        company.users = ClassData.GetUsers(connectionstring, company);
+
+                }
                 else
+                {
                     company.CreateNormalMinBillCompany(ref company, connectionstring);
+                    company.users = ClassData.GetUsers(connectionstring, company);
 
-                #endregion
-
-                #region Section Two(Users)
-
-                company.users = ClassData.GetUsers(connectionstring, company);
+                }
 
                 #endregion
 

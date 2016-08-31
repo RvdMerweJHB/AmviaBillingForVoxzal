@@ -62,23 +62,52 @@ namespace AmviaBillingVoxzal.Classes
             company.UserCount = ClassData.GetUserCount(connectionstring, company);
             company.Username = "";
             company.Name = "";
-            company.Cost = ClassData.GetCompanyLevelCost(connectionstring, company);
-            company.MinBill = ClassData.GetMinBilling(connectionstring, company);
-            company.CompanyMinBill = ClassData.GetMinBilCost(connectionstring, company);
 
-            if (company.MinBill == -1)
-                company.MinBill = (ClassData.GetMinBilCost(connectionstring, company));
+            if (company.GroupCode == "CMA" || company.GroupCode.Contains("Knutton") || company.GroupCode.Contains("Sharp"))
+            {
+                company.Cost = ClassData.GetCompanyLevelCost(connectionstring, company, company.company_ID);
+
+                company.MinBill = ClassData.GetMinBilling(connectionstring, company);
+                company.CompanyMinBill = ClassData.GetMinBilCost(connectionstring, company);
+
+                if (company.MinBill == -1)
+                    company.MinBill = (ClassData.GetMinBilCost(connectionstring, company));
+                else
+                    company.BillingType = "Fixed";
+
+                if (company.Cost >= company.CompanyMinBill)
+                    company.UsageVSMinBill = company.Cost;
+                else
+                    company.UsageVSMinBill = company.CompanyMinBill;
+
+                company.FinalBill = 0;
+
+                company.Company = company.GroupCode + " - STLDX16";
+
+            }
             else
-                company.BillingType = "Fixed";
+            {
+                company.Cost = ClassData.GetCompanyLevelCost(connectionstring, company);
 
-            if (company.Cost >= company.CompanyMinBill)
-                company.UsageVSMinBill = company.Cost;
-            else
-                company.UsageVSMinBill = company.CompanyMinBill;
+                company.MinBill = ClassData.GetMinBilling(connectionstring, company);
+                company.CompanyMinBill = ClassData.GetMinBilCost(connectionstring, company);
 
-            company.FinalBill = 0;
+                if (company.MinBill == -1)
+                    company.MinBill = (ClassData.GetMinBilCost(connectionstring, company));
+                else
+                    company.BillingType = "Fixed";
 
-            company.Company = company.Company + " - " + company.GroupCode;
+                if (company.Cost >= company.CompanyMinBill)
+                    company.UsageVSMinBill = company.Cost;
+                else
+                    company.UsageVSMinBill = company.CompanyMinBill;
+
+                company.FinalBill = 0;
+
+                company.Company = company.Company + " - " + company.GroupCode;
+            }
+            
         }
+
     }
 }
