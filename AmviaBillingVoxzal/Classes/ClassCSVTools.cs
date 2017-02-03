@@ -11,7 +11,7 @@ namespace AmviaBillingVoxzal.Classes
 {
     class ClassCSVTools
     {
-        public string ReadTableFromCSV(string pathName, string sheetName)
+        public static string ReadTableFromCSV(string pathName, string sheetName)
         {
             DataTable tbContainer = new DataTable();
             string strConn = string.Empty;
@@ -38,6 +38,30 @@ namespace AmviaBillingVoxzal.Classes
             DataTable test = new DataTable();
             test = tbContainer;
             return "read";
+        }
+
+        public static DataTable ReadTableFromCSV(string pathName)
+        {
+            string CSVFilePathName = pathName;
+            string[] Lines = File.ReadAllLines(CSVFilePathName);
+            string[] Fields;
+            Fields = Lines[0].Split(new char[] { ',' });
+            int Cols = Fields.GetLength(0);
+            DataTable dt = new DataTable("VmanBillingFile");
+            //1st row must be column names; force lower case to ensure matching later on.
+            for (int i = 0; i < Cols; i++)
+                dt.Columns.Add(Fields[i].ToLower(), typeof(string));
+            DataRow Row;
+            for (int i = 1; i < Lines.GetLength(0); i++)
+            {
+                Fields = Lines[i].Split(new char[] { ',' });
+                Row = dt.NewRow();
+                for (int f = 0; f < Cols; f++)
+                    Row[f] = Fields[f];
+                dt.Rows.Add(Row);
+            }
+
+            return dt;
         }
 
         public static void SaveTableToCSV(DataTable infoTable, string csvFilePath, string fileName)

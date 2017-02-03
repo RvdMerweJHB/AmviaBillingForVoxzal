@@ -19,95 +19,122 @@ namespace AmviaBillingVoxzal.Classes
 
         public ClassCompany(DataRow row)
         {
-            company_ID = Convert.ToInt32(row["Company_ID"]);
-            GroupCode = Convert.ToString(row["CustNmbr"]);
-            Company = Convert.ToString(row["Name"]);
-            Stratus = Convert.ToBoolean(row["Stratus"]);
-            BillingType = Convert.ToString(row["Type"]);
+            try
+            {
+                company_ID = Convert.ToInt32(row["Company_ID"]);
+                GroupCode = Convert.ToString(row["CustNmbr"]);
+                Company = Convert.ToString(row["Name"]);
+                Stratus = Convert.ToBoolean(row["Stratus"]);
+                BillingType = Convert.ToString(row["Type"]);
+            }
+            catch(Exception ex)
+            {
+                throw ex;
+            }
+
         }
 
         public void CreateNormalMinBillCompany(ref ClassCompany company, string connectionstring)
         {
-            company.UserCount = ClassData.GetUserCount(connectionstring, company);
-            company.Username = "";
-            company.Name = "";
-            company.Cost = ClassData.GetCompanyLevelCost(connectionstring, company);
-            company.MinBill = ClassData.GetMinBilling(connectionstring, company);
-            company.CompanyMinBill = ClassData.GetMinBilCost(connectionstring, company);
-
-            if (company.MinBill == -1)
+            try
             {
-                company.BillingType = "Sliding Scale";
-                company.MinBill = (ClassData.GetMinBilCost(connectionstring, company) / company.UserCount);
+                company.UserCount = ClassData.GetUserCount(connectionstring, company);
+                company.Username = "";
+                company.Name = "";
+                company.Cost = ClassData.GetCompanyLevelCost(connectionstring, company);
+                company.MinBill = ClassData.GetMinBilling(connectionstring, company);
+                company.CompanyMinBill = ClassData.GetMinBilCost(connectionstring, company);
+
+                if (company.MinBill == -1)
+                {
+                    company.BillingType = "Sliding Scale";
+                    company.MinBill = (ClassData.GetMinBilCost(connectionstring, company) / company.UserCount);
+                }
+                else
+                    company.BillingType = "Per User";
+
+                if (company.Cost >= company.CompanyMinBill)
+                    company.UsageVSMinBill = company.Cost;
+                else
+                    company.UsageVSMinBill = company.CompanyMinBill;
+
+                company.FinalBill = 0;
+
+                if (company.CompanyMinBill == 0)
+                    company.BillingType = "Usage Only";
+
+
+                company.Company = company.Company + " - " + company.GroupCode;
+
             }
-            else
-                company.BillingType = "Per User";
-
-            if (company.Cost >= company.CompanyMinBill)
-                company.UsageVSMinBill = company.Cost;
-            else
-                company.UsageVSMinBill = company.CompanyMinBill;
-
-            company.FinalBill = 0;
-
-            if (company.CompanyMinBill == 0)
-                company.BillingType = "Usage Only";
-
-
-            company.Company = company.Company + " - " + company.GroupCode;
+            catch(Exception ex)
+            {
+                throw ex;
+            }
         }
 
         public void CreateStratusMinBillCompany(ref ClassCompany company, string connectionstring)
         {
-            company.UserCount = ClassData.GetUserCount(connectionstring, company);
-            company.Username = "";
-            company.Name = "";
+            try
+            { 
 
-            if (company.GroupCode == "CMA" || company.GroupCode.Contains("Knutton") || company.GroupCode.Contains("Sharp"))
-            {
-                company.Cost = ClassData.GetCompanyLevelCost(connectionstring, company, company.company_ID);
+            
+                company.UserCount = ClassData.GetUserCount(connectionstring, company);
+                company.Username = "";
+                company.Name = "";
 
-                company.MinBill = ClassData.GetMinBilling(connectionstring, company);
-                company.CompanyMinBill = ClassData.GetMinBilCost(connectionstring, company);
+                if (company.GroupCode == "CMA" || company.GroupCode.Contains("Knutton") || company.GroupCode.Contains("Sharp"))
+                {
+                    company.Cost = ClassData.GetCompanyLevelCost(connectionstring, company, company.company_ID);
 
-                if (company.MinBill == -1)
-                    company.MinBill = (ClassData.GetMinBilCost(connectionstring, company));
+                    company.MinBill = ClassData.GetMinBilling(connectionstring, company);
+                    company.CompanyMinBill = ClassData.GetMinBilCost(connectionstring, company);
+
+                    if (company.MinBill == -1)
+                        company.MinBill = (ClassData.GetMinBilCost(connectionstring, company));
+                    else
+                        company.BillingType = "Fixed";
+
+                    if (company.Cost >= company.CompanyMinBill)
+                        company.UsageVSMinBill = company.Cost;
+                    else
+                        company.UsageVSMinBill = company.CompanyMinBill;
+
+                    company.FinalBill = 0;
+
+                    company.Company = company.GroupCode + " - STLDX16";
+
+                }
                 else
-                    company.BillingType = "Fixed";
+                {
+                    company.Cost = ClassData.GetCompanyLevelCost(connectionstring, company);
 
-                if (company.Cost >= company.CompanyMinBill)
-                    company.UsageVSMinBill = company.Cost;
-                else
-                    company.UsageVSMinBill = company.CompanyMinBill;
+                    company.MinBill = ClassData.GetMinBilling(connectionstring, company);
+                    company.CompanyMinBill = ClassData.GetMinBilCost(connectionstring, company);
 
-                company.FinalBill = 0;
+                    if (company.MinBill == -1)
+                        company.MinBill = (ClassData.GetMinBilCost(connectionstring, company));
+                    else
+                        company.BillingType = "Fixed";
 
-                company.Company = company.GroupCode + " - STLDX16";
+                    if (company.Cost >= company.CompanyMinBill)
+                        company.UsageVSMinBill = company.Cost;
+                    else
+                        company.UsageVSMinBill = company.CompanyMinBill;
+
+                    company.FinalBill = 0;
+
+                    company.Company = company.Company + " - " + company.GroupCode;
+                }
 
             }
-            else
+            catch (Exception ex)
             {
-                company.Cost = ClassData.GetCompanyLevelCost(connectionstring, company);
-
-                company.MinBill = ClassData.GetMinBilling(connectionstring, company);
-                company.CompanyMinBill = ClassData.GetMinBilCost(connectionstring, company);
-
-                if (company.MinBill == -1)
-                    company.MinBill = (ClassData.GetMinBilCost(connectionstring, company));
-                else
-                    company.BillingType = "Fixed";
-
-                if (company.Cost >= company.CompanyMinBill)
-                    company.UsageVSMinBill = company.Cost;
-                else
-                    company.UsageVSMinBill = company.CompanyMinBill;
-
-                company.FinalBill = 0;
-
-                company.Company = company.Company + " - " + company.GroupCode;
+                throw ex;
             }
             
         }
+
 
     }
 }

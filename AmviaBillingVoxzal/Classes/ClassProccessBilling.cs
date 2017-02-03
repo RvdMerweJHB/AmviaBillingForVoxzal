@@ -29,59 +29,73 @@ namespace AmviaBillingVoxzal.Classes
                 ClassCompany company = new ClassCompany(row);
 
                 #region Secion One(Company)
-
-                if (company.Stratus)
+                try
                 {
-                    company.CreateStratusMinBillCompany(ref company, connectionstring);
+                    if (company.Stratus)
+                    {
+                        company.CreateStratusMinBillCompany(ref company, connectionstring);
 
-                    if (company.Company.StartsWith("CMA") || company.Company.StartsWith("Knutton"))
-                        company.users = ClassData.GetUsers(connectionstring, company, company.company_ID);
-                    else if (company.Company.StartsWith("Sharp") || company.Company.StartsWith("CAP"))
-                        company.users = ClassData.GetUsers(connectionstring, company, company.Company.Substring(0,5));
+                        if (company.Company.StartsWith("CMA") || company.Company.StartsWith("Knutton"))
+                            company.users = ClassData.GetUsers(connectionstring, company, company.company_ID);
+                        else if (company.Company.StartsWith("Sharp") || company.Company.StartsWith("CAP"))
+                            company.users = ClassData.GetUsers(connectionstring, company, company.Company.Substring(0,5));
+                        else
+                            company.users = ClassData.GetUsers(connectionstring, company);
+
+                    }
                     else
+                    {
+                        company.CreateNormalMinBillCompany(ref company, connectionstring);
                         company.users = ClassData.GetUsers(connectionstring, company);
 
-                }
-                else
-                {
-                    company.CreateNormalMinBillCompany(ref company, connectionstring);
-                    company.users = ClassData.GetUsers(connectionstring, company);
+                    }
 
+                }
+                catch(Exception ex)
+                {
+                    throw ex;
                 }
 
                 #endregion
 
                 #region Assemble Sections
-                DataRow CompanyLevelRow = companyTable.NewRow();
-                CompanyLevelRow["Company"] = company.Company;
-                CompanyLevelRow["Username"] = "";
-                CompanyLevelRow["Name"] = "";
-                CompanyLevelRow["UserCount"] = company.UserCount;
-                CompanyLevelRow["Cost"] = company.Cost;
-                CompanyLevelRow["Usage vs Min Billing"] = company.UsageVSMinBill;
-
-                CompanyLevelRow["Min Billing"] = company.MinBill;
-                CompanyLevelRow["Final Bill"] = "";
-                CompanyLevelRow["Company Min Billing"] = company.CompanyMinBill;
-                CompanyLevelRow["Billing Type"] = company.BillingType;
-
-                companyTable.Rows.Add(CompanyLevelRow);
-
-                foreach (ClassUser user in company.users)
+                try
                 {
-                    DataRow userLevelRow = companyTable.NewRow();
-                    userLevelRow["Company"] = user.Company;
-                    userLevelRow["Username"] = user.Username;
-                    userLevelRow["Name"] = user.Name;
-                    userLevelRow["UserCount"] = "";
-                    userLevelRow["Cost"] = user.Cost;
-                    userLevelRow["Usage vs Min Billing"] = user.UsageVSMinBill;
-                    userLevelRow["Min Billing"] = "";
-                    userLevelRow["Final Bill"] = "";
-                    userLevelRow["Company Min Billing"] =user.CompanyMinBill;
+                    DataRow CompanyLevelRow = companyTable.NewRow();
+                    CompanyLevelRow["Company"] = company.Company;
+                    CompanyLevelRow["Username"] = "";
+                    CompanyLevelRow["Name"] = "";
+                    CompanyLevelRow["UserCount"] = company.UserCount;
+                    CompanyLevelRow["Cost"] = company.Cost;
+                    CompanyLevelRow["Usage vs Min Billing"] = company.UsageVSMinBill;
 
-                    companyTable.Rows.Add(userLevelRow);
-                        
+                    CompanyLevelRow["Min Billing"] = company.MinBill;
+                    CompanyLevelRow["Final Bill"] = "";
+                    CompanyLevelRow["Company Min Billing"] = company.CompanyMinBill;
+                    CompanyLevelRow["Billing Type"] = company.BillingType;
+
+                    companyTable.Rows.Add(CompanyLevelRow);
+
+                    foreach (ClassUser user in company.users)
+                    {
+                        DataRow userLevelRow = companyTable.NewRow();
+                        userLevelRow["Company"] = user.Company;
+                        userLevelRow["Username"] = user.Username;
+                        userLevelRow["Name"] = user.Name;
+                        userLevelRow["UserCount"] = "";
+                        userLevelRow["Cost"] = user.Cost;
+                        userLevelRow["Usage vs Min Billing"] = user.UsageVSMinBill;
+                        userLevelRow["Min Billing"] = "";
+                        userLevelRow["Final Bill"] = "";
+                        userLevelRow["Company Min Billing"] =user.CompanyMinBill;
+                        companyTable.Rows.Add(userLevelRow);
+   
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    string test = ex.Message;
                 }
 
                 DataRow emptyRow = companyTable.NewRow();
@@ -95,6 +109,7 @@ namespace AmviaBillingVoxzal.Classes
             #endregion
             
             ClassCSVTools.SaveTableToCSV(companyTable,"C:\\Users\\Developer\\Documents\\AmviaBillingOutput","Test1.csv");
+     
         }
         #endregion
 

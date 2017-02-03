@@ -300,5 +300,25 @@ namespace AmviaBillingVoxzal.Classes
             return userList;
 
         }
+
+        public static void InsertTableIntoDB(DataTable table, string connectionString)
+        {
+            SqlConnection sqlConnection = new SqlConnection();
+            sqlConnection.ConnectionString = connectionString;
+            sqlConnection.Open();
+            try
+            {
+                SqlBulkCopy bulkCopy = new SqlBulkCopy(sqlConnection, SqlBulkCopyOptions.TableLock | SqlBulkCopyOptions.FireTriggers | SqlBulkCopyOptions.UseInternalTransaction, null);
+                bulkCopy.DestinationTableName = table.TableName;
+                bulkCopy.WriteToServer(table);
+               
+            }
+            catch (Exception ex)
+            {
+                string test = ex.Message;
+            }
+            sqlConnection.Close();
+
+        }
     }
 }
