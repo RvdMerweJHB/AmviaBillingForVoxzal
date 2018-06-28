@@ -42,26 +42,46 @@ namespace AmviaBillingVoxzal.Classes
 
         public static DataTable ReadTableFromCSV(string pathName)
         {
+            DataTable dt = new DataTable("VmanBillingFile");
+            DataRow Row;
             string CSVFilePathName = pathName;
             string[] Lines = File.ReadAllLines(CSVFilePathName);
-            string[] Fields;
-            Fields = Lines[0].Split(new char[] { ',' });
-            int Cols = Fields.GetLength(0);
-            DataTable dt = new DataTable("VmanBillingFile");
+            string[] Fields = Lines[0].Split(new char[] { '|' }); ;
+            int[] numericColumns = new int[] { 2, 3, 4, 7};
+            int Cols = Fields.GetLength(0) - 1;
+      
             //1st row must be column names; force lower case to ensure matching later on.
             for (int i = 0; i < Cols; i++)
                 dt.Columns.Add(Fields[i].ToLower(), typeof(string));
-            DataRow Row;
+
             for (int i = 1; i < Lines.GetLength(0); i++)
             {
-                Fields = Lines[i].Split(new char[] { ',' });
+                Fields = Lines[i].Split(new char[] { '|' });
                 Row = dt.NewRow();
+
                 for (int f = 0; f < Cols; f++)
-                    Row[f] = Fields[f];
+                {
+                    if (numericColumns.Contains(f))
+                    {
+                        string inputNumber = Fields[f].Replace("\"", "");
+
+                        if (f == 3)
+                            Row[f] = double.Parse(inputNumber);
+                        else
+                            Row[f] = int.Parse(inputNumber);
+
+                    }
+                    else
+                        Row[f] = Fields[f].Replace("\"", "");
+
+                }
+
                 dt.Rows.Add(Row);
+
             }
 
             return dt;
+
         }
 
         public static void SaveTableToCSV(DataTable infoTable, string csvFilePath, string fileName)
@@ -110,5 +130,28 @@ namespace AmviaBillingVoxzal.Classes
                 throw ex;
             }
         }
+
+        public static string NewMonth(string pathName, string connection)
+        {
+            string result = "";
+            string[] Lines = File.ReadAllLines(pathName);
+            string[] Fields = Lines[1].Split(new char[] { '|' });
+            string incommingDatesringValue = Fields[8].Replace("\"", "");
+            string existingDatesringValue = ClassData.GetCurrentTableDate(connection);
+            string incommingMonth = incommingDatesringValue.Substring(3, 2);
+            string incommingYear = incommingDatesringValue.Substring(6, 4);
+            DateTime incommingDate = new DateTime(int.Parse(incommingYear), int.Parse(incommingMonth), 1);
+
+            //1. Check if current table does not already contain the incomming data:
+            if (incommingDatesringValue == existingDatesringValue)
+                result = "Table has already been created for this file, have you selected the correct one?";
+            else if (ClassData.CheckExistingTables(connection, incommingDate))
+                result = "Table has already been created for this file, have you selected the correct one?";
+
+            return result;
+
+        }
+
     }
+    
 }

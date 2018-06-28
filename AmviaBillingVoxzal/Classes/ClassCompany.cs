@@ -63,9 +63,6 @@ namespace AmviaBillingVoxzal.Classes
                 if (company.CompanyMinBill == 0)
                     company.BillingType = "Usage Only";
 
-
-                company.Company = company.Company + " - " + company.GroupCode;
-
             }
             catch(Exception ex)
             {
@@ -76,9 +73,7 @@ namespace AmviaBillingVoxzal.Classes
         public void CreateStratusMinBillCompany(ref ClassCompany company, string connectionstring)
         {
             try
-            { 
-
-            
+            {  
                 company.UserCount = ClassData.GetUserCount(connectionstring, company);
                 company.Username = "";
                 company.Name = "";
@@ -102,8 +97,6 @@ namespace AmviaBillingVoxzal.Classes
 
                     company.FinalBill = 0;
 
-                    company.Company = company.GroupCode + " - STLDX16";
-
                 }
                 else
                 {
@@ -124,7 +117,6 @@ namespace AmviaBillingVoxzal.Classes
 
                     company.FinalBill = 0;
 
-                    company.Company = company.Company + " - " + company.GroupCode;
                 }
 
             }
