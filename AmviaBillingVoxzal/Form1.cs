@@ -54,12 +54,12 @@ namespace AmviaBillingVoxzal
             try
             {
                 objBilling.AssembleSections();
-                MessageBox.Show("CSV File Creation","CSV File has been created.");
+                MessageBox.Show("CSV File has been created.", "CSV File Creation");
 
             }
             catch (Exception ex)
             {
-                MessageBox.Show("CSV File Creation", "There has been an error:" + Environment.NewLine +  ex.Message);
+                MessageBox.Show("There has been an error:" + Environment.NewLine + ex.Message, "CSV File Creation");
 
             }
 

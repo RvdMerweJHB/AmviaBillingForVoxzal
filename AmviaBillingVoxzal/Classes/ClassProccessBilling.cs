@@ -42,6 +42,7 @@ namespace AmviaBillingVoxzal.Classes
 
                 #region Assemble Sections
                 DataRow CompanyLevelRow = companyTable.NewRow();
+                CompanyLevelRow["Account Code"] = company.GroupCode;
                 CompanyLevelRow["Company"] = company.Company;
                 CompanyLevelRow["Username"] = "";
                 CompanyLevelRow["Name"] = "";
@@ -49,24 +50,25 @@ namespace AmviaBillingVoxzal.Classes
                 CompanyLevelRow["Cost"] = company.Cost;
                 CompanyLevelRow["Usage vs Min Billing"] = company.UsageVSMinBill;
 
-                CompanyLevelRow["Min Billing"] = company.MinBill;
-                CompanyLevelRow["Final Bill"] = "";
+                //CompanyLevelRow["Min Billing"] = company.MinBill;
+                //CompanyLevelRow["Final Bill"] = "";
                 CompanyLevelRow["Company Min Billing"] = company.CompanyMinBill;
-                CompanyLevelRow["Billing Type"] = company.BillingType;
+                //CompanyLevelRow["Billing Type"] = company.BillingType;
 
                 companyTable.Rows.Add(CompanyLevelRow);
 
                 foreach (ClassUser user in company.users)
                 {
                     DataRow userLevelRow = companyTable.NewRow();
+                    userLevelRow["Account Code"] = company.GroupCode;
                     userLevelRow["Company"] = company.Company;
                     userLevelRow["Username"] = user.Username;
                     userLevelRow["Name"] = user.Name;
                     userLevelRow["UserCount"] = "";
                     userLevelRow["Cost"] = user.Cost;
                     userLevelRow["Usage vs Min Billing"] = user.UsageVSMinBill;
-                    userLevelRow["Min Billing"] = "";
-                    userLevelRow["Final Bill"] = "";
+                    //userLevelRow["Min Billing"] = "";
+                    //userLevelRow["Final Bill"] = "";
                     userLevelRow["Company Min Billing"] = user.CompanyMinBill;
                     companyTable.Rows.Add(userLevelRow);
    
@@ -88,6 +90,10 @@ namespace AmviaBillingVoxzal.Classes
 
         private DataTable AddRequiredColums(DataTable companyTable)
         {
+            DataColumn columnZero = new DataColumn();
+            columnZero.ColumnName = "Account Code";
+            companyTable.Columns.Add(columnZero);
+
             DataColumn columnOne = new DataColumn();
             columnOne.ColumnName = "Company";
             companyTable.Columns.Add(columnOne);
@@ -112,21 +118,21 @@ namespace AmviaBillingVoxzal.Classes
             columnSix.ColumnName = "Usage vs Min Billing";
             companyTable.Columns.Add(columnSix);
 
-            DataColumn columnSeven = new DataColumn();
-            columnSeven.ColumnName = "Min Billing";
-            companyTable.Columns.Add(columnSeven);
+            //DataColumn columnSeven = new DataColumn();
+            //columnSeven.ColumnName = "Min Billing";
+            //companyTable.Columns.Add(columnSeven);
 
-            DataColumn columnEight = new DataColumn();
-            columnEight.ColumnName = "Final Bill";
-            companyTable.Columns.Add(columnEight);
+            //DataColumn columnEight = new DataColumn();
+            //columnEight.ColumnName = "Final Bill";
+            //companyTable.Columns.Add(columnEight);
 
             DataColumn columnNine = new DataColumn();
             columnNine.ColumnName = "Company Min Billing";
             companyTable.Columns.Add(columnNine);
 
-            DataColumn columnTen = new DataColumn();
-            columnTen.ColumnName = "Billing Type";
-            companyTable.Columns.Add(columnTen);
+            //DataColumn columnTen = new DataColumn();
+            //columnTen.ColumnName = "Billing Type";
+            //companyTable.Columns.Add(columnTen);
 
             return companyTable;
         }
