@@ -44,7 +44,6 @@ namespace AmviaBillingVoxzal
             else
                 MessageBox.Show(message, "Import Failure");
 
-
         }
 
         private void btnRun_Click(object sender, EventArgs e)
