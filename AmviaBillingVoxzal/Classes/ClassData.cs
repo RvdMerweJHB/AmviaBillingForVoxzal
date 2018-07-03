@@ -344,7 +344,7 @@ namespace AmviaBillingVoxzal.Classes
         public static bool RenameTable(string connectionString)
         {
             SqlCommand sqlCommand = new SqlCommand();
-            DateTime lastMonth = DateTime.Now.AddMonths(-1);
+            DateTime lastMonth = DateTime.Now.AddMonths(-2);
             string renameQuery = "";
             bool result = false;
             int rowsUpdated;

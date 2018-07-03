@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.Configuration;
+using System.Data;
 
 namespace AmviaBillingVoxzal.Classes
 {
@@ -82,8 +83,10 @@ namespace AmviaBillingVoxzal.Classes
 
             companyTable.AcceptChanges();
             #endregion
-            
-            ClassCSVTools.SaveTableToCSV(companyTable,"C:\\Users\\Developer\\Documents\\AmviaBillingOutput","Test1.csv");
+
+            ClassCSVTools.SaveTableToCSV(companyTable, ConfigurationManager.AppSettings["OutputDir"], "AmviaDataproFormat.csv");
+
+            //ClassCSVTools.SaveTableToCSV(companyTable,"C:\\Users\\Developer\\Documents\\AmviaBillingOutput","AmviaDataproFormat.csv");
      
         }
         #endregion
